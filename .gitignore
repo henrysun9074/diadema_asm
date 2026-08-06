@@ -1,6 +1,6 @@
 *
+/results/nextflow_work/
 .snakemake/
-!*/
 !README.md
 !seqfile.txt
 !/analysis/stats_summary/*.txt
