@@ -1,0 +1,16 @@
+genome: /work/hs325/diadema/ref/DO2_collapsed_polished.fa
+
+taxid: 1316087
+
+short_reads:
+  - SRR29948272
+  - SRR24973326
+  - SRR24973327
+
+locus_tag_prefix: DANT
+
+cmsearch:
+  enabled: true
+
+trnascan:
+  enabled: true

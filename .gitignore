@@ -1,0 +1,17 @@
+*
+.snakemake/
+!*/
+!README.md
+!seqfile.txt
+!/analysis/stats_summary/*.txt
+!/analysis/wgatools/vcf/*.txt
+!.gitignore
+!*.sh
+!*.R
+!*.yml
+!*.yaml
+!*.png
+!*.pdf
+!*.jpg
+!*.svg
+.Rproj.user
