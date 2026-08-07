@@ -1,10 +1,7 @@
 *
 /results/nextflow_work/
-.snakemake/
+!scripts/
 !README.md
-!seqfile.txt
-!/analysis/stats_summary/*.txt
-!/analysis/wgatools/vcf/*.txt
 !.gitignore
 !*.sh
 !*.R
