@@ -26,17 +26,26 @@ mkdir -p "$APPTAINER_TMPDIR"
 
 cd /hpc/group/schultzlab/hs325/egapx
 
+########### check internet access
+echo "HOST: $(hostname)"
+echo "DATE: $(date)"
+
+python - <<'PY'
+import urllib.request
+print(urllib.request.urlopen("https://eutils.ncbi.nlm.nih.gov", timeout=20).status)
+PY
+
 # python ui/egapx.py \
 #     /work/hs325/diadema/scripts/egap/input.yaml \
 #     -e slurm \
 #     -lc /work/hs325/diadema/scripts/logs/cache \
 #     -o /work/hs325/diadema/results/collapsed
 
-python ui/egapx.py \
-    /work/hs325/diadema/scripts/egap/input2.yaml \
-    -e slurm \
-    -lc /work/hs325/diadema/scripts/logs/cache \
-    -o /work/hs325/diadema/results/hap1
+# python ui/egapx.py \
+#     /work/hs325/diadema/scripts/egap/input2.yaml \
+#     -e slurm \
+#     -lc /work/hs325/diadema/scripts/logs/cache \
+#     -o /work/hs325/diadema/results/hap1
 
 python ui/egapx.py \
     /work/hs325/diadema/scripts/egap/input3.yaml \
