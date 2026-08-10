@@ -11,6 +11,7 @@
 #SBATCH --mail-user=hs325@duke.edu
 
 # Assemblies
+dset="/work/hs325/diadema/ref/dsetosum/Diadema_setosum_genomic.fna"
 collapsed="/work/hs325/diadema/ref/DO2_collapsed_polished.fa"
 corrected="/work/hs325/diadema/results/ragtag/ragtag.correct.fasta"
 corrected_scaffolded="/work/hs325/diadema/results/ragtag/scaffolded/ragtag.scaffold.fasta"
@@ -20,7 +21,6 @@ mkdir -p "$outdir"
 
 source /hpc/group/schultzlab/hs325/miniconda3/etc/profile.d/conda.sh
 cd /work/hs325/diadema/results/ragtag/qc
-
 
 ########################################
 # BUSCO
@@ -65,6 +65,13 @@ cd /work/hs325/diadema/results/ragtag/qc
 #     -t 10 \
 #     --labels "v1.1,v1.2"
 
+# quast.py \
+#     "$dset" \
+#     "$collapsed" \
+#     -o "$outdir/quast_oldasms" \
+#     -t 10 \
+#     --labels "dset,dantcollapsed"
+
 
 ########################################
 # GAP STATISTICS
@@ -78,19 +85,39 @@ for asm in "$collapsed" "$corrected" "$corrected_scaffolded"; do
 
     name=$(basename "$asm")
 
-    num_gaps=$(grep -v '^>' "$asm" | \
-        tr -d '\n' | \
-        grep -o -i 'N\+' | \
-        wc -l)
+    awk -v name="$name" '
+    BEGIN {
+        gaps = 0
+        gap_bases = 0
+        in_gap = 0
+    }
 
-    gap_bases=$(grep -v '^>' "$asm" | \
-        tr -d '\n' | \
-        grep -o -i 'N' | \
-        wc -l)
+    /^>/ {
+        # A gap cannot continue across FASTA records
+        in_gap = 0
+        next
+    }
 
-    printf "%s\t%s\t%s\n" \
-        "$name" \
-        "$num_gaps" \
-        "$gap_bases" >> "$gap_stats"
+    {
+        for (i = 1; i <= length($0); i++) {
+            base = substr($0, i, 1)
+
+            if (base == "N" || base == "n") {
+                gap_bases++
+
+                if (!in_gap) {
+                    gaps++
+                    in_gap = 1
+                }
+            } else {
+                in_gap = 0
+            }
+        }
+    }
+
+    END {
+        printf "%s\t%d\t%d\n", name, gaps, gap_bases
+    }
+    ' "$asm" >> "$gap_stats"
 
 done
