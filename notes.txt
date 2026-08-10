@@ -1,0 +1,18 @@
+##################################### FROM PAPER ###################################
+the two phased haplotypes, hap1 and hap2, spanned 946,558,832 bp (0.95 Gb; 2860 contigs; N50 662 kb) and 892,201,912 bp (0.89 Gb; 2400 contigs; N50 682 kb), 
+respectively. The Racon-polished collapsed primary together with the two phased haplotypes constitutes the haplotype-resolved reference reported here.
+
+Reassembly with hifiasm in haplotype-aware mode (—dual-scaf) resolved the duplication more completely. This produced a collapsed primary assembly of 1.03 Gb (1,028,719,238 bp after Racon polishing; 
+2051 contigs; N50 1.20 Mb) and two phased haplotype assemblies: hap1 (946,558,832 bp; 0.95 Gb; 2860 contigs; N50 662 kb) and hap2 (892,201,912 bp; 0.89 Gb; 2400 contigs; N50 682 kb). BUSCO completeness (metazoa_odb12) was 99.0% for the collapsed primary, 
+with single-copy orthologs at 85.0% and duplicates at 14.0%; for the phased haplotypes, single-copy completeness rose to 88.1% (hap1) and 90.2% (hap2), with duplicates falling to 6.2% and 1.5%, respectively (Table 4; Figure 3).
+
+Mapping the HiFi reads back to the assembly, Sniffles2 (v2.6.0) identified 2326 structural variants ≥ 1 kb—1289 deletions, 388 insertions, 34 duplications, 15 inversions, and 600 breakend calls. The deletions, insertions, and duplications span 9.3 Mb (0.53% of the assembly), with the 15 inversions adding a further 8.6 Mb (Supplementary Figure S5). These calls are overwhelmingly heterozygous and, 
+being derived from a self-alignment of the reads to the assembly they built, are best interpreted as differences between the two retained haplotypes of this individual—and, for the breakend calls, as contig-fragmentation artifacts, rather than as external or population-level structural variation. Redundant mapping of raw reads to the assembly was 0.38%.
+
+##################################### FROM PAPER ###################################
+
+analyses to try:
+- gene annotations using EGAP for both haplotypes
+- hemizygous gene regions for both haplotypes
+- try scaffold to chromosome level using diadema setosum assembly -- https://onlinelibrary.wiley.com/doi/full/10.1111/1755-0998.14109
+- demographic ==> PSMC
