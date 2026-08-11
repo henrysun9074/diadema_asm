@@ -13,6 +13,8 @@
 # Assemblies
 dset="/work/hs325/diadema/ref/dsetosum/Diadema_setosum_genomic.fna"
 collapsed="/work/hs325/diadema/ref/DO2_collapsed_polished.fa"
+hap1="/work/hs325/diadema/ref/DO2_hap1.fa"
+hap2="/work/hs325/diadema/ref/DO2_hap2.fa"
 corrected_hap1="/work/hs325/diadema/results/ragtag/hap1/ragtag.correct.fasta"
 corrected_scaffolded_hap1="/work/hs325/diadema/results/ragtag/hap1/scaffolded/ragtag.scaffold.fasta"
 corrected_hap2="/work/hs325/diadema/results/ragtag/hap2/ragtag.correct.fasta"
@@ -41,45 +43,52 @@ cd /work/hs325/diadema/results/ragtag/qc
 #     > "/work/hs325/diadema/results/ragtag/hap2/ragtag.correct.wrapped.fasta"
 # corrected_hap1="/work/hs325/diadema/results/ragtag/hap2/ragtag.correct.wrapped.fasta"
 
-conda activate busco
+# conda activate busco
 
 # export _JAVA_OPTIONS="-Xmx50g"
 
-busco \
-    -i "$corrected_hap1" \
-    -o corrected_busco_hap1 \
-    -m genome \
-    -l metazoa_odb10 \
-    --force \
-    -c 10 
+# busco \
+#     -i "$corrected_hap1" \
+#     -o corrected_busco_hap1 \
+#     -m genome \
+#     -l metazoa_odb10 \
+#     --force \
+#     -c 10 
 
-busco \
-    -i "$corrected_scaffolded_hap1" \
-    -o corrected_scaffolded_busco_hap1 \
-    -m genome \
-    -l metazoa_odb10 \
-    -c 10 
+# busco \
+#     -i "$corrected_scaffolded_hap1" \
+#     -o corrected_scaffolded_busco_hap1 \
+#     -m genome \
+#     -l metazoa_odb10 \
+#     -c 10 
 
-busco \
-    -i "$corrected_hap2" \
-    -o corrected_busco_hap2 \
-    -m genome \
-    -l metazoa_odb10 \
-    --force \
-    -c 10 
+# busco \
+#     -i "$corrected_hap2" \
+#     -o corrected_busco_hap2 \
+#     -m genome \
+#     -l metazoa_odb10 \
+#     --force \
+#     -c 10 
 
-busco \
-    -i "$corrected_scaffolded_hap2" \
-    -o corrected_scaffolded_busco_hap2 \
-    -m genome \
-    -l metazoa_odb10 \
-    -c 10 
+# busco \
+#     -i "$corrected_scaffolded_hap2" \
+#     -o corrected_scaffolded_busco_hap2 \
+#     -m genome \
+#     -l metazoa_odb10 \
+#     -c 10 
 
 ########################################
 # QUAST
 ########################################
 
-# conda activate quast
+conda activate quast
+
+quast.py \
+    "$hap1" \
+    "$hap2" \
+    -o "$outdir/quast_haps" \
+    -t 10 \
+    --labels "hap1,hap2"
 
 quast.py \
     "$corrected_hap1" \
@@ -111,7 +120,7 @@ gap_stats="$outdir/gap_stats_haps.tsv"
 
 printf "Assembly\tNumber_of_gaps\tTotal_gap_bases\n" > "$gap_stats"
 
-for asm in "$corrected_hap1" "$corrected_hap2" "$corrected_scaffolded_hap1" "$corrected_scaffolded_hap2"; do
+for asm in "$hap1" "$hap2" "$corrected_scaffolded_hap1" "$corrected_scaffolded_hap2"; do
 
     name=$(basename "$asm")
 
