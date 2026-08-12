@@ -15,6 +15,7 @@ dset="/work/hs325/diadema/ref/dsetosum/Diadema_setosum_genomic.fna"
 collapsed="/work/hs325/diadema/ref/DO2_collapsed_polished.fa"
 corrected="/work/hs325/diadema/results/ragtag/ragtag.correct.fasta"
 corrected_scaffolded="/work/hs325/diadema/results/ragtag/scaffolded/ragtag.scaffold.fasta"
+reverse="/work/hs325/diadema/results/ragtag/reverse/ragtag.scaffold.fasta"
 
 outdir="/work/hs325/diadema/results/ragtag/qc"
 mkdir -p "$outdir"
@@ -26,24 +27,24 @@ cd /work/hs325/diadema/results/ragtag/qc
 # BUSCO
 ########################################
 
-# conda activate syri_stable
+conda activate syri_stable
 
-# seqkit seq -w 80 \
-#     "$corrected" \
-#     > "/work/hs325/diadema/results/ragtag/ragtag.correct.wrapped.fasta"
-# corrected="/work/hs325/diadema/results/ragtag/ragtag.correct.wrapped.fasta"
+seqkit seq -w 80 \
+    "$reverse" \
+    > "/work/hs325/diadema/results/ragtag/reverse/ragtag.correct.wrapped.fasta"
+reverse="/work/hs325/diadema/results/ragtag/reverse/ragtag.correct.wrapped.fasta"
 
-# conda activate busco
+conda activate busco
 
 # export _JAVA_OPTIONS="-Xmx50g"
 
-# busco \
-#     -i "$corrected" \
-#     -o corrected_busco \
-#     -m genome \
-#     -l metazoa_odb10 \
-#     --force \
-#     -c 10 
+busco \
+    -i "$reverse" \
+    -o reverse_busco \
+    -m genome \
+    -l metazoa_odb10 \
+    --force \
+    -c 10 
 
 # busco \
 #     -i "$corrected_scaffolded" \
@@ -56,14 +57,14 @@ cd /work/hs325/diadema/results/ragtag/qc
 # QUAST
 ########################################
 
-# conda activate quast
+conda activate quast
 
-# quast.py \
-#     "$corrected" \
-#     "$corrected_scaffolded" \
-#     -o "$outdir/quast" \
-#     -t 10 \
-#     --labels "v1.1,v1.2"
+quast.py \
+    "$collapsed" \
+    "$reverse" \
+    -o "$outdir/quast_reverse" \
+    -t 10 \
+    --labels "collapsed,reverse"
 
 # quast.py \
 #     "$dset" \
@@ -72,16 +73,15 @@ cd /work/hs325/diadema/results/ragtag/qc
 #     -t 10 \
 #     --labels "dset,dantcollapsed"
 
-
 ########################################
 # GAP STATISTICS
 ########################################
 
-gap_stats="$outdir/gap_stats.tsv"
+gap_stats="$outdir/gap_stats_reverse.tsv"
 
 printf "Assembly\tNumber_of_gaps\tTotal_gap_bases\n" > "$gap_stats"
 
-for asm in "$collapsed" "$corrected" "$corrected_scaffolded"; do
+for asm in "$collapsed" "$reverse"; do
 
     name=$(basename "$asm")
 

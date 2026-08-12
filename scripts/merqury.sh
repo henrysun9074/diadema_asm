@@ -14,6 +14,7 @@ set -euo pipefail
 
 source /hpc/group/schultzlab/hs325/miniconda3/etc/profile.d/conda.sh
 conda activate assembly
+module load R/4.4.0
 
 # short reads
 R1="/work/hs325/diadema/ref/raw/illumina/SRR32478703_1.fastq.gz"
@@ -23,13 +24,14 @@ k=21
 
 
 declare -A assemblies=(
-    [collapsed]="/work/hs325/diadema/ref/DO2_collapsed_polished.fa"
-    [collapsed_v1.1]="/work/hs325/diadema/results/ragtag/ragtag.correct.fasta"
-    [collapsed_v1.2]="/work/hs325/diadema/results/ragtag/scaffolded/ragtag.scaffold.fasta"
-    [hap1]="/work/hs325/diadema/ref/DO2_hap1.fa"
-    [hap2]="/work/hs325/diadema/ref/DO2_hap2.fa"
-    [hap1_v2]="/work/hs325/diadema/results/ragtag/hap1/scaffolded/ragtag.scaffold.fasta"
-    [hap2_v2]="/work/hs325/diadema/results/ragtag/hap2/scaffolded/ragtag.scaffold.fasta"
+    [reverse]="/work/hs325/diadema/results/ragtag/reverse/ragtag.scaffold.fasta"
+    # [collapsed]="/work/hs325/diadema/ref/DO2_collapsed_polished.fa"
+    # [collapsed_v1.1]="/work/hs325/diadema/results/ragtag/ragtag.correct.fasta"
+    # [collapsed_v1.2]="/work/hs325/diadema/results/ragtag/scaffolded/ragtag.scaffold.fasta"
+    # [hap1]="/work/hs325/diadema/ref/DO2_hap1.fa"
+    # [hap2]="/work/hs325/diadema/ref/DO2_hap2.fa"
+    # [hap1_v2]="/work/hs325/diadema/results/ragtag/hap1/scaffolded/ragtag.scaffold.fasta"
+    # [hap2_v2]="/work/hs325/diadema/results/ragtag/hap2/scaffolded/ragtag.scaffold.fasta"
 )
 
 outdir="/work/hs325/diadema/results/merqury"

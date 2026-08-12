@@ -51,4 +51,4 @@ python ui/egapx.py \
     /work/hs325/diadema/scripts/egap/input3.yaml \
     -e slurm \
     -lc /work/hs325/diadema/scripts/logs/cache \
-    -o /work/hs325/diadema/results/hap2    
+    -o /work/hs325/diadema/results/corrected_scaffolded    
