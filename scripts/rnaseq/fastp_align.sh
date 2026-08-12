@@ -31,51 +31,51 @@ assemblies[corrected_scaffolded]="/work/hs325/diadema/results/ragtag/scaffolded/
 assemblies[hap1]="/work/hs325/diadema/ref/DO2_hap1.fa"
 assemblies[hap2]="/work/hs325/diadema/ref/DO2_hap2.fa"
 
-echo "=== Running fastp ==="
+# echo "=== Running fastp ==="
 
-for r1 in *_R1*.fastq.gz; do
-    [[ -e "${r1}" ]] || continue
-    r2="${r1/_R1/_R2}"
-    if [[ -f "${r2}" ]]; then
-        sample="${r1%%_R1*}"
-        out1="${TRIM_DIR}/${r1}"
-        out2="${TRIM_DIR}/${r2}"
-        echo "Trimming paired-end sample: ${sample}"
-        fastp \
-            -i "${r1}" \
-            -I "${r2}" \
-            -o "${out1}" \
-            -O "${out2}" \
-            > "${TRIM_DIR}/${sample}.fastp.log" 2>&1
-    fi
-done
+# for r1 in *_R1*.fastq.gz; do
+#     [[ -e "${r1}" ]] || continue
+#     r2="${r1/_R1/_R2}"
+#     if [[ -f "${r2}" ]]; then
+#         sample="${r1%%_R1*}"
+#         out1="${TRIM_DIR}/${r1}"
+#         out2="${TRIM_DIR}/${r2}"
+#         echo "Trimming paired-end sample: ${sample}"
+#         fastp \
+#             -i "${r1}" \
+#             -I "${r2}" \
+#             -o "${out1}" \
+#             -O "${out2}" \
+#             > "${TRIM_DIR}/${sample}.fastp.log" 2>&1
+#     fi
+# done
 
-echo "=== Building/checking HISAT2 indexes ==="
+# echo "=== Building/checking HISAT2 indexes ==="
 
-for asm in "${!assemblies[@]}"; do
+# for asm in "${!assemblies[@]}"; do
 
-    fasta="${assemblies[$asm]}"
-    index_prefix="${INDEX_DIR}/${asm}"
+#     fasta="${assemblies[$asm]}"
+#     index_prefix="${INDEX_DIR}/${asm}"
 
-    if [[ ! -f "${fasta}" ]]; then
-        echo "ERROR: Assembly not found: ${fasta}" >&2
-        exit 1
-    fi
+#     if [[ ! -f "${fasta}" ]]; then
+#         echo "ERROR: Assembly not found: ${fasta}" >&2
+#         exit 1
+#     fi
 
-    # HISAT2 indexes can be .ht2 or .ht2l.
-    if [[ ! -f "${index_prefix}.1.ht2" && \
-          ! -f "${index_prefix}.1.ht2l" ]]; then
+#     # HISAT2 indexes can be .ht2 or .ht2l.
+#     if [[ ! -f "${index_prefix}.1.ht2" && \
+#           ! -f "${index_prefix}.1.ht2l" ]]; then
 
-        echo "Building HISAT2 index for ${asm}"
+#         echo "Building HISAT2 index for ${asm}"
 
-        hisat2-build \
-            "${fasta}" \
-            "${index_prefix}"
-    else
-        echo "HISAT2 index already exists for ${asm}; skipping."
-    fi
+#         hisat2-build \
+#             "${fasta}" \
+#             "${index_prefix}"
+#     else
+#         echo "HISAT2 index already exists for ${asm}; skipping."
+#     fi
 
-done
+# done
 
 echo "=== Running HISAT2 alignments ==="
 
