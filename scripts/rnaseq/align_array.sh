@@ -25,11 +25,10 @@ INDEX_DIR="/work/hs325/diadema/ref/hisat2_indexes"
 mkdir -p "${RESULTS_DIR}"
 
 declare -A assemblies
-
-assemblies[collapsed]="/work/hs325/diadema/ref/DO2_collapsed_polished.fa"
-assemblies[corrected_scaffolded]="/work/hs325/diadema/results/ragtag/scaffolded/ragtag.scaffold.fasta"
-assemblies[hap1]="/work/hs325/diadema/ref/DO2_hap1.fa"
-assemblies[hap2]="/work/hs325/diadema/ref/DO2_hap2.fa"
+# assemblies[collapsed]="/work/hs325/diadema/ref/DO2_collapsed_polished.fa"
+assemblies[corrected_scaffolded]="/work/hs325/diadema/results/ragtag/scaffolded/filtered.fasta"
+# assemblies[hap1]="/work/hs325/diadema/ref/DO2_hap1.fa"
+# assemblies[hap2]="/work/hs325/diadema/ref/DO2_hap2.fa"
 
 mapfile -t R1_FILES < <(
     find "${TRIM_DIR}" -maxdepth 1 -type f -name '*_R1*.fastq.gz' | sort
@@ -66,7 +65,7 @@ echo "Task:   ${SLURM_ARRAY_TASK_ID}"
 echo "CPUs:   ${SLURM_CPUS_PER_TASK}"
 echo "============================================================"
 
-for asm in collapsed corrected_scaffolded hap1 hap2; do
+for asm in corrected_scaffolded; do
 
     echo
     echo "------------------------------------------------------------"

@@ -13,6 +13,8 @@
 # Assemblies
 dset="/work/hs325/diadema/ref/dsetosum/Diadema_setosum_genomic.fna"
 collapsed="/work/hs325/diadema/ref/DO2_collapsed_polished.fa"
+hap1="/work/hs325/diadema/ref/DO2_hap1.fa"
+hap2="/work/hs325/diadema/ref/DO2_hap2.fa"
 # corrected="/work/hs325/diadema/results/ragtag/ragtag.correct.fasta"
 corrected_scaffolded="/work/hs325/diadema/results/ragtag/scaffolded/filtered.fasta"
 # reverse="/work/hs325/diadema/results/ragtag/reverse/ragtag.scaffold.fasta"
@@ -40,13 +42,22 @@ conda activate busco
 
 export _JAVA_OPTIONS="-Xmx50g"
 
+# busco \
+#     -i "$corrected_scaffolded" \
+#     -o corrected_scaffolded_busco \
+#     -m genome \
+#     -l metazoa_odb10 \
+#     --force \
+#     -c 10 
+
 busco \
     -i "$corrected_scaffolded" \
-    -o corrected_scaffolded_busco \
+    -o corrected_scaffolded_busco_odb12 \
     -m genome \
-    -l metazoa_odb10 \
+    -l metazoa_odb12 \
     --force \
     -c 10 
+
 
 # busco \
 #     -i "$hap1_v2" \
@@ -68,14 +79,14 @@ busco \
 # QUAST
 ########################################
 
-conda activate quast
+# conda activate quast
 
-quast.py \
-    "$collapsed" \
-    "$corrected_scaffolded" \
-    -o "$outdir/quast" \
-    -t 10 \
-    --labels "collapsed,corrected_scaffolded"
+# quast.py \
+#     "$collapsed" \
+#     "$corrected_scaffolded" \
+#     -o "$outdir/quast" \
+#     -t 10 \
+#     --labels "collapsed,corrected_scaffolded"
 
 # quast.py \
 #     "$hap1_v2" \
@@ -88,50 +99,51 @@ quast.py \
 # GAP STATISTICS
 ########################################
 
-gap_stats="$outdir/gap_stats.tsv"
+# gap_stats="$outdir/gap_stats_hap1hap2.tsv"
 
-printf "Assembly\tNumber_of_gaps\tTotal_gap_bases\n" > "$gap_stats"
+# printf "Assembly\tNumber_of_gaps\tTotal_gap_bases\n" > "$gap_stats"
 
-for asm in "$collapsed" "$corrected_scaffolded" "$hap1_v2" "$hap2_v2"; do
+# for asm in "$hap1" "$hap2"; do
 
-    name=$(basename "$asm")
+#     name=$(basename "$asm")
 
-    awk -v name="$name" '
-    BEGIN {
-        gaps = 0
-        gap_bases = 0
-        in_gap = 0
-    }
+#     awk -v name="$name" '
+#     BEGIN {
+#         gaps = 0
+#         gap_bases = 0
+#         in_gap = 0
+#     }
 
-    /^>/ {
-        # A gap cannot continue across FASTA records
-        in_gap = 0
-        next
-    }
+#     /^>/ {
+#         # A gap cannot continue across FASTA records
+#         in_gap = 0
+#         next
+#     }
 
-    {
-        for (i = 1; i <= length($0); i++) {
-            base = substr($0, i, 1)
+#     {
+#         for (i = 1; i <= length($0); i++) {
+#             base = substr($0, i, 1)
 
-            if (base == "N" || base == "n") {
-                gap_bases++
+#             if (base == "N" || base == "n") {
+#                 gap_bases++
 
-                if (!in_gap) {
-                    gaps++
-                    in_gap = 1
-                }
-            } else {
-                in_gap = 0
-            }
-        }
-    }
+#                 if (!in_gap) {
+#                     gaps++
+#                     in_gap = 1
+#                 }
+#             } else {
+#                 in_gap = 0
+#             }
+#         }
+#     }
 
-    END {
-        printf "%s\t%d\t%d\n", name, gaps, gap_bases
-    }
-    ' "$asm" >> "$gap_stats"
+#     END {
+#         printf "%s\t%d\t%d\n", name, gaps, gap_bases
+#     }
+#     ' "$asm" >> "$gap_stats"
 
-done
+# done
+
 
 ####################### command line w/ seqkit 
 # conda activate syri_stable
