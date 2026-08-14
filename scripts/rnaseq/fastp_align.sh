@@ -26,10 +26,10 @@ mkdir -p "${TRIM_DIR}" "${RESULTS_DIR}" "${INDEX_DIR}"
 cd "${RNASEQ_DIR}"
 
 declare -A assemblies
-assemblies[collapsed]="/work/hs325/diadema/ref/DO2_collapsed_polished.fa"
-assemblies[corrected_scaffolded]="/work/hs325/diadema/results/ragtag/scaffolded/ragtag.scaffold.fasta"
-assemblies[hap1]="/work/hs325/diadema/ref/DO2_hap1.fa"
-assemblies[hap2]="/work/hs325/diadema/ref/DO2_hap2.fa"
+# assemblies[collapsed]="/work/hs325/diadema/ref/DO2_collapsed_polished.fa"
+assemblies[corrected_scaffolded]="/work/hs325/diadema/results/ragtag/scaffolded/filtered.fasta"
+# assemblies[hap1]="/work/hs325/diadema/ref/DO2_hap1.fa"
+# assemblies[hap2]="/work/hs325/diadema/ref/DO2_hap2.fa"
 
 # echo "=== Running fastp ==="
 
@@ -50,32 +50,32 @@ assemblies[hap2]="/work/hs325/diadema/ref/DO2_hap2.fa"
 #     fi
 # done
 
-# echo "=== Building/checking HISAT2 indexes ==="
+echo "=== Building/checking HISAT2 indexes ==="
 
-# for asm in "${!assemblies[@]}"; do
+for asm in "${!assemblies[@]}"; do
 
-#     fasta="${assemblies[$asm]}"
-#     index_prefix="${INDEX_DIR}/${asm}"
+    fasta="${assemblies[$asm]}"
+    index_prefix="${INDEX_DIR}/${asm}"
 
-#     if [[ ! -f "${fasta}" ]]; then
-#         echo "ERROR: Assembly not found: ${fasta}" >&2
-#         exit 1
-#     fi
+    if [[ ! -f "${fasta}" ]]; then
+        echo "ERROR: Assembly not found: ${fasta}" >&2
+        exit 1
+    fi
 
-#     # HISAT2 indexes can be .ht2 or .ht2l.
-#     if [[ ! -f "${index_prefix}.1.ht2" && \
-#           ! -f "${index_prefix}.1.ht2l" ]]; then
+    # HISAT2 indexes can be .ht2 or .ht2l.
+    if [[ ! -f "${index_prefix}.1.ht2" && \
+          ! -f "${index_prefix}.1.ht2l" ]]; then
 
-#         echo "Building HISAT2 index for ${asm}"
+        echo "Building HISAT2 index for ${asm}"
 
-#         hisat2-build \
-#             "${fasta}" \
-#             "${index_prefix}"
-#     else
-#         echo "HISAT2 index already exists for ${asm}; skipping."
-#     fi
+        hisat2-build \
+            "${fasta}" \
+            "${index_prefix}"
+    else
+        echo "HISAT2 index already exists for ${asm}; skipping."
+    fi
 
-# done
+done
 
 echo "=== Running HISAT2 alignments ==="
 

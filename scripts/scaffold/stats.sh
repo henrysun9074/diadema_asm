@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=ragtagstats
-#SBATCH --partition=schultzlab
+#SBATCH --partition=common
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=10
 #SBATCH --output=/work/hs325/diadema/scripts/logs/ragtagstats.out
@@ -13,9 +13,11 @@
 # Assemblies
 dset="/work/hs325/diadema/ref/dsetosum/Diadema_setosum_genomic.fna"
 collapsed="/work/hs325/diadema/ref/DO2_collapsed_polished.fa"
-corrected="/work/hs325/diadema/results/ragtag/ragtag.correct.fasta"
-corrected_scaffolded="/work/hs325/diadema/results/ragtag/scaffolded/ragtag.scaffold.fasta"
-reverse="/work/hs325/diadema/results/ragtag/reverse/ragtag.scaffold.fasta"
+# corrected="/work/hs325/diadema/results/ragtag/ragtag.correct.fasta"
+corrected_scaffolded="/work/hs325/diadema/results/ragtag/scaffolded/filtered.fasta"
+# reverse="/work/hs325/diadema/results/ragtag/reverse/ragtag.scaffold.fasta"
+hap1_v2="/work/hs325/diadema/results/ragtag/hap1/ragtag.correct.fasta"
+hap2_v2="/work/hs325/diadema/results/ragtag/hap2/ragtag.correct.fasta"
 
 outdir="/work/hs325/diadema/results/ragtag/qc"
 mkdir -p "$outdir"
@@ -27,30 +29,39 @@ cd /work/hs325/diadema/results/ragtag/qc
 # BUSCO
 ########################################
 
-conda activate syri_stable
+# conda activate syri_stable
 
-seqkit seq -w 80 \
-    "$reverse" \
-    > "/work/hs325/diadema/results/ragtag/reverse/ragtag.correct.wrapped.fasta"
-reverse="/work/hs325/diadema/results/ragtag/reverse/ragtag.correct.wrapped.fasta"
+# seqkit seq -w 80 \
+#     "$corrected_scaffolded" \
+#     > "/work/hs325/diadema/results/ragtag/scaffolded/ragtag.correct.wrapped.fasta"
+# reverse="/work/hs325/diadema/results/ragtag/scaffolded/ragtag.correct.wrapped.fasta"
 
 conda activate busco
 
-# export _JAVA_OPTIONS="-Xmx50g"
+export _JAVA_OPTIONS="-Xmx50g"
 
 busco \
-    -i "$reverse" \
-    -o reverse_busco \
+    -i "$corrected_scaffolded" \
+    -o corrected_scaffolded_busco \
     -m genome \
     -l metazoa_odb10 \
     --force \
     -c 10 
 
 # busco \
-#     -i "$corrected_scaffolded" \
-#     -o corrected_scaffolded_busco \
+#     -i "$hap1_v2" \
+#     -o corrected_scaffolded_busco_hap1 \
 #     -m genome \
 #     -l metazoa_odb10 \
+#     --force \
+#     -c 10 
+
+# busco \
+#     -i "$hap2_v2" \
+#     -o corrected_scaffolded_busco_hap2 \
+#     -m genome \
+#     -l metazoa_odb10 \
+#     --force \
 #     -c 10 
 
 ########################################
@@ -61,27 +72,27 @@ conda activate quast
 
 quast.py \
     "$collapsed" \
-    "$reverse" \
-    -o "$outdir/quast_reverse" \
+    "$corrected_scaffolded" \
+    -o "$outdir/quast" \
     -t 10 \
-    --labels "collapsed,reverse"
+    --labels "collapsed,corrected_scaffolded"
 
 # quast.py \
-#     "$dset" \
-#     "$collapsed" \
-#     -o "$outdir/quast_oldasms" \
+#     "$hap1_v2" \
+#     "$hap2_v2" \
+#     -o "$outdir/quast_haps" \
 #     -t 10 \
-#     --labels "dset,dantcollapsed"
+#     --labels "hap1_v2,hap2_v2"
 
 ########################################
 # GAP STATISTICS
 ########################################
 
-gap_stats="$outdir/gap_stats_reverse.tsv"
+gap_stats="$outdir/gap_stats.tsv"
 
 printf "Assembly\tNumber_of_gaps\tTotal_gap_bases\n" > "$gap_stats"
 
-for asm in "$collapsed" "$reverse"; do
+for asm in "$collapsed" "$corrected_scaffolded" "$hap1_v2" "$hap2_v2"; do
 
     name=$(basename "$asm")
 
@@ -121,3 +132,9 @@ for asm in "$collapsed" "$reverse"; do
     ' "$asm" >> "$gap_stats"
 
 done
+
+####################### command line w/ seqkit 
+# conda activate syri_stable
+
+# cd /work/hs325/diadema/results/ragtag/scaffolded
+# seqkit fx2tab --length --name --header-line filtered.fasta > filtered_contig_lengths.txt
