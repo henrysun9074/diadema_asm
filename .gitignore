@@ -9,4 +9,7 @@
 *.sif
 *.fai
 /go_terms/.nextflow/
+/go_terms/eggnog_db/
+/go_terms/tmp
+/go_terms/emapper_out/
 .nextflow*
