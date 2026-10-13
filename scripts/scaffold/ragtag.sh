@@ -31,11 +31,28 @@ conda activate ragtag
 # ragtag.py asmstats $asm
 
 # ######### haplotype 1
-# dset_asm="/work/hs325/diadema/ref/dsetosum/Diadema_setosum_genomic.fna"
-# dant_asm="/work/hs325/diadema/ref/DO2_hap1.fa"
+dset_asm="/work/hs325/diadema/ref/dsetosum/Diadema_setosum_genomic.fna"
+dant_asm="/work/hs325/diadema/ref/DO2_hap1.fa"
 
-# result="/work/hs325/diadema/results/ragtag/hap1"
-# result2="/work/hs325/diadema/results/ragtag/hap1/scaffolded"
+result="/work/hs325/diadema/results/ragtag/hap1"
+result2="/work/hs325/diadema/results/ragtag/hap1/scaffolded"
+mkdir -p $result
+mkdir -p $result2
+
+# # [reference] [query]
+# ragtag.py correct $dset_asm $dant_asm -w -o $result
+ragtag.py scaffold $dset_asm $result/ragtag.correct.fasta -w -o $result2
+
+# ###### stats
+# asm=$result2"/ragtag.scaffold.fasta"
+# ragtag.py asmstats $asm
+
+# ######### haplotype 2
+# dset_asm="/work/hs325/diadema/ref/dsetosum/Diadema_setosum_genomic.fna"
+# dant_asm="/work/hs325/diadema/ref/DO2_hap2.fa"
+
+# result="/work/hs325/diadema/results/ragtag/hap2"
+# result2="/work/hs325/diadema/results/ragtag/hap2/scaffolded"
 # mkdir -p $result
 # mkdir -p $result2
 
@@ -46,20 +63,3 @@ conda activate ragtag
 # ###### stats
 # asm=$result2"/ragtag.scaffold.fasta"
 # ragtag.py asmstats $asm
-
-# ######### haplotype 2
-dset_asm="/work/hs325/diadema/ref/dsetosum/Diadema_setosum_genomic.fna"
-dant_asm="/work/hs325/diadema/ref/DO2_hap2.fa"
-
-result="/work/hs325/diadema/results/ragtag/hap2"
-result2="/work/hs325/diadema/results/ragtag/hap2/scaffolded"
-mkdir -p $result
-mkdir -p $result2
-
-# [reference] [query]
-ragtag.py correct $dset_asm $dant_asm -w -o $result
-ragtag.py scaffold $dset_asm $result/ragtag.correct.fasta -w -o $result2
-
-###### stats
-asm=$result2"/ragtag.scaffold.fasta"
-ragtag.py asmstats $asm

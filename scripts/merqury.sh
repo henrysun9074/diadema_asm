@@ -25,13 +25,13 @@ k=21
 
 declare -A assemblies=(
     # [reverse]="/work/hs325/diadema/results/ragtag/reverse/ragtag.scaffold.fasta"
-    [collapsed]="/work/hs325/diadema/ref/DO2_collapsed_polished.fa"
+    # [collapsed]="/work/hs325/diadema/ref/DO2_collapsed_polished.fa"
     # [collapsed_v1.1]="/work/hs325/diadema/results/ragtag/ragtag.correct.fasta"
-    [collapsed_v1.2]="/work/hs325/diadema/results/ragtag/scaffolded/filtered.fasta"
-    [hap1]="/work/hs325/diadema/ref/DO2_hap1.fa"
-    [hap2]="/work/hs325/diadema/ref/DO2_hap2.fa"
+    # [collapsed_v1.2]="/work/hs325/diadema/results/ragtag/scaffolded/filtered.fasta"
+    # [hap1]="/work/hs325/diadema/ref/DO2_hap1.fa"
+    # [hap2]="/work/hs325/diadema/ref/DO2_hap2.fa"
     [hap1_v2]="/work/hs325/diadema/results/ragtag/hap1/scaffolded/ragtag.scaffold.fasta"
-    [hap2_v2]="/work/hs325/diadema/results/ragtag/hap2/scaffolded/ragtag.scaffold.fasta"
+    # [hap2_v2]="/work/hs325/diadema/results/ragtag/hap2/scaffolded/ragtag.scaffold.fasta"
 )
 
 outdir="/work/hs325/diadema/results/merqury"

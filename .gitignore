@@ -4,4 +4,9 @@
 *.out
 *.err
 *.fa
+*.faa
+*.log
+*.sif
 *.fai
+/go_terms/.nextflow/
+.nextflow*
