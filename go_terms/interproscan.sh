@@ -10,6 +10,7 @@
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=hs325@duke.edu
 
+module load Java/23.0.1
 cd /work/hs325/diadema/go_terms
 mkdir -p interproscan_data ips_out ips_work
 
@@ -17,8 +18,16 @@ export NXF_APPTAINER_CACHEDIR=/work/hs325/diadema/go_terms/apptainer_cache
 export NXF_SINGULARITY_CACHEDIR=$NXF_APPTAINER_CACHEDIR
 mkdir -p $NXF_APPTAINER_CACHEDIR
 
+# keep apptainer's own layer cache and build temp off $HOME and /tmp
+export APPTAINER_CACHEDIR=/work/hs325/diadema/go_terms/apptainer_cache/layers
+export APPTAINER_TMPDIR=/work/hs325/diadema/go_terms/apptainer_cache/tmp
+export SINGULARITY_CACHEDIR=$APPTAINER_CACHEDIR
+export SINGULARITY_TMPDIR=$APPTAINER_TMPDIR
+mkdir -p $APPTAINER_CACHEDIR $APPTAINER_TMPDIR
+
 nextflow run ebi-pf-team/interproscan6 \
   -r 6.0.2.2 \
+  -resume 17565694-a20c-486b-a4f2-acce5b66671d \
   -profile apptainer \
   -w ./ips_work \
   --input /work/hs325/diadema/go_terms/dant_prot.faa \
