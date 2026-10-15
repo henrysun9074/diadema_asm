@@ -9,6 +9,7 @@
 *.sif
 *.dmnd
 *.csv
+*.map
 *.tsv
 *.obo
 *.fai
