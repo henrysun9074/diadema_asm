@@ -20,7 +20,10 @@ mkdir -p $NXF_APPTAINER_CACHEDIR
 
 # keep apptainer's own layer cache and build temp off $HOME and /tmp
 export APPTAINER_CACHEDIR=/work/hs325/diadema/go_terms/apptainer_cache/layers
-export APPTAINER_TMPDIR=/work/hs325/diadema/go_terms/apptainer_cache/tmp
+
+# build temp must be on local disk
+export APPTAINER_TMPDIR=$(mktemp -d ${TMPDIR:-/tmp}/apptainer.XXXXXX)
+trap 'rm -rf "$APPTAINER_TMPDIR"' EXIT
 export SINGULARITY_CACHEDIR=$APPTAINER_CACHEDIR
 export SINGULARITY_TMPDIR=$APPTAINER_TMPDIR
 mkdir -p $APPTAINER_CACHEDIR $APPTAINER_TMPDIR
