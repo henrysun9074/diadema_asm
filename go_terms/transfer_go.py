@@ -1,27 +1,14 @@
 #!/usr/bin/env python3
 """
-Transfer GO terms from S. purpuratus (Echinobase) to Diadema proteins/genes
-via DIAMOND reciprocal best hits (RBH), computed at the gene level.
+Transfer GO terms from Spur to Dant via DIAMOND reciprocal best hits (RBH) at the gene level
 
 Inputs
   --go        Echinobase GeneGoTerms.txt
-              (genepage ID, ECB-GENE ID, symbol, comma-separated GO terms)
   --spur-map  Echinobase NcbiProteinEchinobaseGene_Spur.txt
-              (numeric ID, NCBI protein accession, ECB-GENE ID, symbol)
   --fwd       DIAMOND outfmt-6 of Diadema (query) vs Spur (db)
   --rev       DIAMOND outfmt-6 of Spur (query) vs Diadema (db)
-              Both must use: --outfmt 6 qseqid sseqid pident length qlen slen evalue bitscore
-  --map       (optional) Diadema protein_id <tab> gene_id, same file as for merge_go.py.
-              Without it every Diadema protein is treated as its own gene.
+  --map       (optional) Diadema protein_id file
   --out       output file
-
-Filters (applied to both directions before picking best hits)
-  --evalue    max e-value            (default 1e-10)
-  --pident    min % identity         (default 30)
-  --cov       min alignment coverage of BOTH query and subject, % (default 50)
-
-Output: tab-separated  diadema_id <tab> GO:1,GO:2,... <tab> spur_gene <tab> spur_symbol
-        (diadema_id is the gene ID if --map was given, otherwise the protein ID)
 """
 import argparse
 import re
@@ -69,8 +56,7 @@ def load_spur(go_path, map_path):
 
 
 def best_hits(path, qkey, skey, a):
-    """Best hit per query *gene* (by bitscore) after filtering.
-    qkey / skey map raw sequence IDs to gene IDs (None = drop)."""
+    """Best hit per query gene after filtering"""
     best = {}
     with open(path) as fh:
         for line in fh:
@@ -136,8 +122,6 @@ def main():
     if unmapped:
         print(f"Warning: {unmapped} lines in --rev had S. purpuratus IDs not found in "
               f"--spur-map (check FASTA headers vs. accessions).")
-    print(f"Wrote {a.out}")
-
 
 if __name__ == "__main__":
     main()
