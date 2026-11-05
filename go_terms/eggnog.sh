@@ -11,17 +11,17 @@
 
 cd /work/hs325/diadema/go_terms
 
-############ do these beforehand
+############ do these beforehand - comment once database retrieved
 
 # pull for eggnog
 # singularity build eggnog-mapper.sif docker://nanozoo/eggnog-mapper:2.1.13--c16a7d2
 
 # check version
-# singularity run eggnog-mapper.sif emapper.py --version
+singularity run eggnog-mapper.sif emapper.py --version
 
-# download data
+## download data
 # cd /work/hs325/diadema/go_terms/eggnog_db
-# this database moved -- no longer eggnogdb.embl.de
+## this database moved -- no longer eggnogdb.embl.de
 # base=http://eggnog5.embl.de/download/emapperdb-5.0.2
 
 # wget $base/eggnog.db.gz            && gunzip eggnog.db.gz
@@ -34,18 +34,19 @@ ls -lh /work/hs325/diadema/go_terms/eggnog_db
 ############
 
 # run eggnog
-mkdir -p /work/hs325/diadema/go_terms/emapper_out
+mkdir -p /work/hs325/diadema/go_terms/emapper_out_5nov
 TMP=/work/hs325/diadema/go_terms/tmp
 mkdir -p $TMP
 
 singularity exec eggnog-mapper.sif emapper.py \
-    -i /work/hs325/diadema/go_terms/dant_prot.faa \
-    --itype proteins \
-    -m diamond \
+    -m no_search \
+    --annotate_hits_table ./emapper_out/diadema.emapper.seed_orthologs \
     --data_dir ./eggnog_db \
-    --output diadema \
-    --output_dir ./emapper_out \
+    --output diadema_strict \
+    --output_dir ./emapper_out_5nov \
+    --go_evidence non-electronic \
+    --target_orthologs one2one \
+    --tax_scope Metazoa \
     --cpu ${SLURM_CPUS_PER_TASK} \
-    --go_evidence all \
     --dbmem \
     --temp_dir $TMP

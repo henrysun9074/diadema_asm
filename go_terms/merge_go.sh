@@ -12,32 +12,32 @@
 source /hpc/group/schultzlab/hs325/miniconda3/etc/profile.d/conda.sh
 cd /work/hs325/diadema/go_terms
 
-##################### uncomment if not done yet
-# wget https://purl.obolibrary.org/obo/go/go-basic.obo
+##################### pull latest GO.obo file
+wget https://purl.obolibrary.org/obo/go/go-basic.obo
 
 # get the Spurpuratus GO terms
-# mkdir -p spur && cd spur
-# base=https://download.echinobase.org/echinobase
-# wget $base/GenePageReports/GeneGoTerms.txt
-# wget $base/GenePageReports/NcbiProteinEchinobaseGene_Spur.txt
-# wget $base/Genomics/Spur5.0/sp5_0_GCF_proteins.fa.gz
-# cd ..
+mkdir -p spur && cd spur
+base=https://download.echinobase.org/echinobase
+wget $base/GenePageReports/GeneGoTerms.txt
+wget $base/GenePageReports/NcbiProteinEchinobaseGene_Spur.txt
+wget $base/Genomics/Spur5.0/sp5_0_GCF_proteins.fa.gz
+cd ..
 ##########################################
 
 # run diamond for the spur stuff
-# conda activate synteny 
-# S="singularity exec -B /work eggnog-mapper.sif"
-# FMT="6 qseqid sseqid pident length qlen slen evalue bitscore"
+conda activate synteny 
+S="singularity exec -B /work eggnog-mapper.sif"
+FMT="6 qseqid sseqid pident length qlen slen evalue bitscore"
 
-# $S diamond makedb --in spur/sp5_0_GCF_proteins.fa.gz -d spur/spur
-# $S diamond makedb --in dant_prot.faa -d dant
+$S diamond makedb --in spur/sp5_0_GCF_proteins.fa.gz -d spur/spur
+$S diamond makedb --in dant_prot.faa -d dant
 
-# $S diamond blastp -q dant_prot.faa -d spur/spur -o dant_vs_spur.tsv \
-#    --outfmt $FMT --evalue 1e-5 --max-target-seqs 5 --more-sensitive \
-#    --threads ${SLURM_CPUS_PER_TASK}
-# $S diamond blastp -q spur/sp5_0_GCF_proteins.fa.gz -d dant -o spur_vs_dant.tsv \
-#    --outfmt $FMT --evalue 1e-5 --max-target-seqs 5 --more-sensitive \
-#    --threads ${SLURM_CPUS_PER_TASK}
+$S diamond blastp -q dant_prot.faa -d spur/spur -o dant_vs_spur.tsv \
+   --outfmt $FMT --evalue 1e-5 --max-target-seqs 5 --more-sensitive \
+   --threads ${SLURM_CPUS_PER_TASK}
+$S diamond blastp -q spur/sp5_0_GCF_proteins.fa.gz -d dant -o spur_vs_dant.tsv \
+   --outfmt $FMT --evalue 1e-5 --max-target-seqs 5 --more-sensitive \
+   --threads ${SLURM_CPUS_PER_TASK}
 
 ########### make protein to gene map
 # e.g. gnl|WGS:ZZZZ|DANT_004159-P1 -> DANT_004159
@@ -56,18 +56,29 @@ python3 transfer_go.py --go spur/GeneGoTerms.txt \
 # RBH genes receiving GO terms: 9664
 
 ###### some checks
-# wc -l *.tsv # 9664 diadema_spur_go 
-# grep -c '>' dant_prot.faa #21151 total CDS
-# cut -f1 dant_vs_spur.tsv | sort -u | wc -l # 20127 had a hit in Spur
-# cut -f1 spur_vs_dant.tsv | sort -u | wc -l # 35116 had a hit in Dant
+wc -l *.tsv # 9664 diadema_spur_go 
+grep -c '>' dant_prot.faa #21151 total CDS
+cut -f1 dant_vs_spur.tsv | sort -u | wc -l # 20127 had a hit in Spur
+cut -f1 spur_vs_dant.tsv | sort -u | wc -l # 35116 had a hit in Dant
 
 ### after we've got all the GO terms from IPS/Eggnog -- run this
 ## pannzer results http://ekhidna2.biocenter.helsinki.fi/barcosel/tmp//VSzE7vs0y7J/index.html
+# original merge (14 Oct): permissive eggNOG run (--go_evidence all, no tax scope)
+# python3 merge_go.py \
+#     --emapper emapper_out/diadema.emapper.annotations \
+#     --ips     ips_out/dant_prot.faa.tsv \
+#     --pannzer anno.out \
+#     --ortho   diadema_spur_go.tsv \
+#     --map     prot2gene.tsv \
+#     --obo     go-basic.obo \
+#     --out     diadema_go
+
+# strict eggNOG merge --- rerun on 11/5
 python3 merge_go.py \
-    --emapper emapper_out/diadema.emapper.annotations \
+    --emapper emapper_out_5nov/diadema_strict.emapper.annotations \
     --ips     ips_out/dant_prot.faa.tsv \
     --pannzer anno.out \
     --ortho   diadema_spur_go.tsv \
     --map     prot2gene.tsv \
     --obo     go-basic.obo \
-    --out     diadema_go
+    --out     diadema_go_strict

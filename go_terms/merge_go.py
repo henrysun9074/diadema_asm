@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Merge GO annotations from eggNOG-mapper and InterProScan into one gene-level
-annotation set for enrichment analysis (topGO / clusterProfiler / GOseq).
+annotation set for enrichment analysis
 
 Usage:
   python merge_go.py \
@@ -13,30 +13,17 @@ Usage:
       --map     prot2gene.tsv \
       --out     diadema_go
 
-Inputs
+Arguments:
   --emapper  eggNOG-mapper *.emapper.annotations file (uses the GOs column)
-  --ips      InterProScan TSV output (GO terms are pulled from the GO column)
-  --obo      (optional, recommended) go-basic.obo from
-             https://purl.obolibrary.org/obo/go/go-basic.obo
-             Used to: drop obsolete terms, convert alternate IDs to primary IDs,
-             add the ontology (BP/MF/CC), and propagate terms to ancestors.
-  --pannzer  (optional) PANNZER2 anno.out file. GO rows (BP/MF/CC_ARGOT) are kept
-             when their PPV is >= --pannzer-ppv (default 0.5).
-  --ortho    (optional) output of transfer_go.py: id <tab> GO:1,GO:2,...
-             (GO terms transferred from S. purpuratus orthologs)
-  --map      (optional) 2-column TSV: protein_id <tab> gene_id. Use this when
-             your FASTA has one entry per transcript/isoform but your RNA-seq
-             counts are per gene. Proteins not in the map keep their own ID.
+  --ips      InterProScan TSV output
+  --obo      (optional) latest go-basic.obo file
+  --pannzer  PANNZER2 anno.out file 
+  --ortho    output of transfer_go.py with GO terms transferred from S. purpuratus orthologs
+  --map      (optional) 2-column TSV for a FASTA with one entry per transcript/isoform but per-gene RNAseq counts
+             counts are per gene
   --out      output prefix
-
-Outputs
-  <out>.gene2go.tsv    long table: gene, GO, ontology, sources (e.g. eggnog;interpro;spur_ortholog)
-                       and n_sources (handy for filtering to terms with >=2 lines of support)
-  <out>.topgo.map      gene <tab> GO:1, GO:2, ...  (direct terms; topGO propagates itself)
-  <out>.term2gene.tsv  GO <tab> gene for clusterProfiler::enricher(TERM2GENE=...).
-                       Ancestor-propagated when --obo is given, because enricher()
-                       does not walk the GO graph itself.
 """
+
 import argparse
 import re
 import sys
@@ -59,7 +46,7 @@ def read_map(path):
 
 
 def parse_emapper(path):
-    """Return {protein: set(GO)} from the GOs column."""
+    """Return {protein: set(GO)} from the GOs column from eggnog"""
     out = defaultdict(set)
     go_col = None
     with open(path) as fh:
@@ -78,8 +65,7 @@ def parse_emapper(path):
 
 
 def parse_ips(path):
-    """Return {protein: set(GO)}. GO terms sit in column 14 of the TSV; they may
-    carry source tags such as GO:0005515(InterPro), so IDs are pulled by regex."""
+    """Return {protein: set(GO)} from InterProScan"""
     out = defaultdict(set)
     with open(path) as fh:
         for line in fh:
@@ -93,8 +79,7 @@ def parse_ips(path):
 
 
 def parse_pannzer(path, min_ppv):
-    """Return {protein: set(GO)} from PANNZER2 anno.out.
-    Columns: qpid, type, score, PPV, id, desc. GO ids are bare 7-digit numbers."""
+    """Return {protein: set(GO)} from PANNZER2 anno.out"""
     out = defaultdict(set)
     with open(path) as fh:
         for line in fh:
@@ -234,7 +219,7 @@ def main():
             if parents is not None:
                 for go in list(terms):
                     terms |= ancestors(go, parents, cache)
-                # drop the three root terms; they are uninformative for enrichment
+                # drop the three root terms
                 terms -= {"GO:0008150", "GO:0003674", "GO:0005575"}
             for go in sorted(terms):
                 fh.write(f"{go}\t{gene}\n")
@@ -254,7 +239,7 @@ def main():
         print(f"Alt IDs remapped: {n_alt}; obsolete terms dropped: {n_obsolete}")
         print(f"Propagated TERM2GENE pairs: {n_pairs}")
     else:
-        print("No --obo given: TERM2GENE is NOT propagated and obsolete terms were not removed.")
+        print("No --obo given: TERM2GENE is NOT propagated and obsolete terms were not removed")
     print(f"Wrote {a.out}.gene2go.tsv, {a.out}.topgo.map, {a.out}.term2gene.tsv")
 
 
